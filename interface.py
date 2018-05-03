@@ -11,7 +11,7 @@ class window(QMainWindow):
         self.height = 650
         self.top = 10
         self.left = 10
-        self.paginas = 7
+        self.paginas = 5
         self.initUI()
 
     def initUI(self):
@@ -96,6 +96,11 @@ class window(QMainWindow):
         # Cria Botão de Matar Processo
         self.button = QPushButton('Matar', self)
         self.button.move(190, 525)
+        self.button.resize
+
+        # Cria Botão de Ajuda
+        self.button = QPushButton('Ajuda', self)
+        self.button.move(350, 15)
         self.button.resize
 
         self.show()
