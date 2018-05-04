@@ -12,6 +12,8 @@ class window(QMainWindow):
         self.top = 10
         self.left = 10
         self.paginas = 5
+        self.pagemiss = 0
+        self.pagehit = 0
         self.initUI()
 
     def initUI(self):
@@ -104,4 +106,26 @@ class window(QMainWindow):
         self.button.resize
 
         self.show()
-    
+
+    def PID(self, pid):
+        # Texto PID
+        self.lbl = QLabel(self)
+        self.lbl.setText('PID: ' + self.pid)
+        self.lbl.move(300, 70)
+        self.show()
+
+    def PageHit(self):
+        # Texto Page Hit
+        self.pagehit = self.pagehit + 1
+        self.lbl = QLabel(self)
+        self.lbl.setText('Page Hit: ' + str(self.pagehit))
+        self.lbl.move(20, 120)
+        self.show()
+
+    def PageMiss(self):
+        # Texto Page Miss
+        self.pagemiss = self.pagemiss + 1
+        self.lbl = QLabel(self)
+        self.lbl.setText('Page Miss: ' + str(self.pagemiss))
+        self.lbl.move(100, 120)
+        self.show()
