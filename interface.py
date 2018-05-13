@@ -16,6 +16,8 @@ class window(QMainWindow):
         self.pagemiss = 0
         self.pagehit = 0
         self.pid = 0
+        self.local_page = []
+        self.bk = Backend()
         self.initUI()
     
     def initUI(self):
@@ -45,9 +47,13 @@ class window(QMainWindow):
         self.textbox_4.move(146, 45)
         self.textbox_4.resize(40,80)
 
-        self.textbox_4 = QLineEdit(self)
-        self.textbox_4.move(188, 45)
-        self.textbox_4.resize(40,80)
+        self.textbox_5 = QLineEdit(self)
+        self.textbox_5.move(188, 45)
+        self.textbox_5.resize(40,80)
+
+        self.textbox_6 = QLineEdit(self)
+        self.textbox_6.move(230, 45)
+        self.textbox_6.resize(40,80)
 
         # Texto Quadros
         self.lbl = QLabel(self)
@@ -105,9 +111,9 @@ class window(QMainWindow):
         self.button_12k.move(240, 315)
         self.button_12k.clicked.connect(self.AdicionaProcesso12K)
 
-        self.button_16k = QPushButton('Processo 16K', self)
-        self.button_16k.move(350, 315)
-        self.button_16k.clicked.connect(self.AdicionaProcesso16K)
+        # self.button_16k = QPushButton('Processo 16K', self)
+        # self.button_16k.move(350, 315)
+        # self.button_16k.clicked.connect(self.AdicionaProcesso16K)
 
         # Texto Pular Ciclos
         self.lbl = QLabel(self)
@@ -196,24 +202,38 @@ class window(QMainWindow):
         self.lbl_pagemiss.setText('Page Miss: ' + str(self.pagemiss))
         self.repaint()
 
+    def UpdatePage(self):
+        self.bk.setPages()
+        self.local_page = self.bk.actualPage() 
+
+        self.textbox_1.setText("   " + str(self.local_page[0]))
+        self.textbox_2.setText("   " + str(self.local_page[1]))
+        self.textbox_3.setText("   " + str(self.local_page[2]))
+        self.textbox_4.setText("   " + str(self.local_page[3]))
+        self.textbox_5.setText("   " + str(self.local_page[4]))
+        self.textbox_6.setText("   " + str(self.local_page[5]))
+
     @pyqtSlot()
     def AdicionaProcesso4K(self):
-        print("Botao Clicado - 4k")
+        self.bk.createProcess(4)
+        self.Avanca1()
 
     def AdicionaProcesso8K(self):
-        print("Botao Clicado - 8k")
+        self.bk.createProcess(8)
+        self.Avanca1()
 
     def AdicionaProcesso12K(self):
-        print("Botao Clicado - 4k")
+        self.bk.createProcess(12)
+        self.Avanca1()
 
-    def AdicionaProcesso16K(self):
-        print("Botao Clicado - 8k")
+    # def AdicionaProcesso16K(self):
+    #     print("Botao Clicado - 8k")
 
     def MataProcesso(self):
         print("Botao Clicado - 8k")
     
     def Avanca1(self):
-        print("Botao Clicado - 4k")
+        self.UpdatePage()
 
     def Avanca2(self):
         print("Botao Clicado - 8k")
