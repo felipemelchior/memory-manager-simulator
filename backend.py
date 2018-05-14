@@ -1,20 +1,20 @@
 import random as rd
 
-class Backend():
+class Backend(): # Definição da classe de BackEnd
     def __init__(self):
-        self.pid = []
-        self.pages = []
-        self.frames = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.cont = 0
-        self.first = 0
-        self.actual = -1
-        self.frameActual = 0
-        self.missHit = [0, 0]
-
-    def createProcess(self, size):
+        self.pid = [] # Lista de processos
+        self.pages = [] # Lista de Páginas
+        self.frames = [-1, -1, -1, -1, -1, -1, -1, -1] # Lista de frames setado como default
+        self.cont = 0 # Variável auxiliar de contador
+        self.first = 0 # Variável usada para o FIFO
+        self.actual = -1 # Variável que mostra a página atual
+        self.frameActual = 0 # Variável que mostra o quadro atual
+        self.missHit = [0, 0] # Lista de acerto/erro de página
+ 
+    def createProcess(self, size): # Função que cria um processo
         self.pid.append([size, self.first, rd.randint(2, 8)])
         
-    def setPages(self):
+    def setPages(self): # Função que determina quantas páginas cada processo necessita
         if(self.cont <= len(self.pid)):
             self.pages.append([])
             self.numberPages = (int(self.pid[self.cont][0]/2))
@@ -28,13 +28,12 @@ class Backend():
             self.cont += 1
             self.first += 1
 
-    def missAndHit(self):
+    def missAndHit(self): # Retorna a quantidade de PageMiss e PageHit
         return self.missHit
 
-    def killProcess(self, pid):
+    def killProcess(self, pid): # Função que encerra um processo com base no seu PID
         try:
             pid = int(pid)
-            # if(pid >= 0 and pid < len(self.pid)):
             for i in range(len(self.pid)):
                 if(self.pid[i][1] == pid):
                     a = self.pid[i]
@@ -55,7 +54,7 @@ class Backend():
             self.pages = []
             self.pid = []
 
-    def getPids(self):
+    def getPids(self): # Função que retorna uma mini-fila de processos, com base no PID
         self.aux = self.actual+1
         if(self.actual == len(self.pid)-1):
             self.aux = 0
@@ -65,7 +64,7 @@ class Backend():
         else:
             return [-1,-1,-1]
 
-    def setFrames(self):  
+    def setFrames(self): # Função que determina quem está usando qual quadro da memória  
         if(self.actual < len(self.pid)):
             self.pageSize = int(self.pid[self.actual][0]/2)
         
@@ -85,7 +84,7 @@ class Backend():
 
             return self.frames
 
-    def actualPage(self):
+    def actualPage(self): # Função que retorna a página atual
         self.pid[self.actual][2] -= 1
         if(self.pid[self.actual][2] == 0):
             self.killProcess(self.pid[self.actual][1])
@@ -101,5 +100,5 @@ class Backend():
         else:
             return [-1,-1,-1,-1,-1,-1]
     
-    def quantPid(self):
+    def quantPid(self): # Função que retorna a quantidade de processos na fila de execução
         return len(self.pid)

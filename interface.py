@@ -4,26 +4,22 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAc
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 
-class window(QMainWindow):
-    def __init__(self):
+class window(QMainWindow): # Definição da classe
+    def __init__(self): # Construtor da classe 
         super().__init__()
-        self.title = 'Simulador de Gerência de Memória'
-        self.width = 490
-        self.height = 650
-        self.top = 10
-        self.left = 10
-        self.paginas = 5
-        self.pagemiss = 0
-        self.pagehit = 0
-        self.pid = 0
-        self.local_page = []
-        self.bk = Backend()
+        self.title = 'Simulador de Gerência de Memória' # Titulo da janela
+        self.width = 490 # Largura da janela
+        self.height = 650 # Altura da janela
+        self.pagemiss = 0 # Numero para inicialização de pagemiss
+        self.pagehit = 0 # Numero para inicialização de pagehit
+        self.pid = 0 # Numero para inicializaçao de pid
+        self.local_page = [] # inicialização de uma lista local de paginas, usada em uma função
+        self.bk = Backend() # Instanciação da classe de backend
         self.initUI()
     
     def initUI(self):
         # Inicia a Janela
         self.setWindowTitle(self.title)
-        # self.setGeometry(self.left, self.top, self.width, self.height)
         self.setFixedSize(self.width, self.height)
 
         # Texto Páginas
@@ -194,28 +190,29 @@ class window(QMainWindow):
         self.lbl_textoCriadores.move(95, 620)
         self.lbl_textoCriadores.resize(500, 20)
 
+        # Mostra tudo criado
         self.show()
 
-    def setPid(self, pid1, pid2, pid3):
+    def setPid(self, pid1, pid2, pid3): # Atualiza a mini fila de processos
         self.lbl_pidAnt.setText('PID Atual: ' + str(pid1))
         self.lbl_pidAtual.setText('PID Prox.: ' + str(pid2))
         self.lbl_pidProx.setText('PID 2xProx.: ' + str(pid3))
 
         self.repaint()
 
-    def PageHit(self, pagehit):
+    def PageHit(self, pagehit): # Atualiza o PageHit
         self.lbl_pagehit.setText('Page Hit: ' + str(pagehit))
         self.repaint()
 
-    def PageMiss(self, pagemiss):
+    def PageMiss(self, pagemiss): # Atualiza o PageMiss
         self.lbl_pagemiss.setText('Page Miss: ' + str(pagemiss))
         self.repaint()
 
-    def mostraAviso(self, texto):
+    def mostraAviso(self, texto): # Mostra o aviso de ausência de processos
         self.lbl_avisoPID.setText(texto)
         self.repaint()
 
-    def UpdatePage(self):
+    def UpdatePage(self): # Atualiza o programa
         self.frames = self.bk.setFrames()    
         self.local_page = self.bk.actualPage() 
 
@@ -243,26 +240,26 @@ class window(QMainWindow):
         self.setPid(self.local_pids[0], self.local_pids[1], self.local_pids[2])
 
     @pyqtSlot()
-    def AdicionaProcesso4K(self):
+    def AdicionaProcesso4K(self): # Função que conecta ao botão, criando um processo
         self.bk.createProcess(4)
         self.bk.setPages()
         self.Avanca1()
 
-    def AdicionaProcesso8K(self):
+    def AdicionaProcesso8K(self): # Função que conecta ao botão, criando um processo
         self.bk.createProcess(8)
         self.bk.setPages()
         self.Avanca1()
 
-    def AdicionaProcesso12K(self):
+    def AdicionaProcesso12K(self): # Função que conecta ao botão, criando um processo
         self.bk.createProcess(12)
         self.bk.setPages()
         self.Avanca1()
 
-    def MataProcesso(self):
+    def MataProcesso(self): # Função que conecta ao botão, matando um processo
         self.PID_to_kill = self.textbox_kill.text()
         self.bk.killProcess(self.PID_to_kill)
     
-    def Avanca1(self):
+    def Avanca1(self): # Função que conecta ao botão, Avançando um ciclo
         self.qtdPID = self.bk.quantPid()
         if(self.qtdPID > 0):
             self.UpdatePage()
@@ -270,14 +267,14 @@ class window(QMainWindow):
         else:
             self.mostraAviso("Sem Processos")
 
-    def Avanca2(self):
+    def Avanca2(self): # Faz a chamada de avanço de 2 ciclos
         self.Avanca1()
         self.Avanca1()
 
-    def Avanca3(self):
+    def Avanca3(self): # Faz a chamada de avanço de 3 ciclos
         self.Avanca1()
         self.Avanca1()
         self.Avanca1()
 
-    def Ajuda(self):
+    def Ajuda(self): # Função que exibe a ajuda do programa
         QMessageBox.question(self, "Ajuda", "Este Software tem como objetivo simular paginação de memória, usando FIFO e FirstFit.\n\n1. Na seção de Páginas, ficam as páginas locais do processo atual.\n\n2. Na seção de Quadros, ficam os PID's dos processos que estão em execução ou na fila de execução.\n\n3. Ao lado dos quadros, encontra-se uma parte da fila de processos para a execução.\n\n4. Os botões de criação de processos, efetuam a criação de processos de diferentes tamanhos, cada processo recebe uma quantidade de ciclos aleatórias para a sua execução. Cada tamanho remete à quantidade de páginas que o mesmo ocupará na memória, as páginas tem tamanho 2K.\n\n5. É possível avançar ciclos, utilizando os botões de avanço.\n\n6. Se necessário, um processo pode ser encerrado com o botão 'Matar Processo', passando o PID do processo que irá ser encerrado. Os processos tem uma quantidade de ciclos, quando esse número chegar a 0, o processo será enceerrado automaticamente.", QMessageBox.Ok)
