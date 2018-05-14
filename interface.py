@@ -8,7 +8,7 @@ class window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Simulador de Gerência de Memória'
-        self.width = 480
+        self.width = 490
         self.height = 650
         self.top = 10
         self.left = 10
@@ -23,7 +23,8 @@ class window(QMainWindow):
     def initUI(self):
         # Inicia a Janela
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        # self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
 
         # Texto Páginas
         self.lbl = QLabel(self)
@@ -159,18 +160,23 @@ class window(QMainWindow):
 
         # Texto PID Anterior
         self.lbl_pidAnt = QLabel(self)
-        self.lbl_pidAnt.setText('PID Ant.: ' + str(self.pid))
+        self.lbl_pidAnt.setText('PID Atual: ' + str(self.pid))
         self.lbl_pidAnt.move(390, 190)
 
         # Texto PID Atual
         self.lbl_pidAtual = QLabel(self)
-        self.lbl_pidAtual.setText('PID Atual: ' + str(self.pid))
+        self.lbl_pidAtual.setText('PID Prox.: ' + str(self.pid))
         self.lbl_pidAtual.move(390, 205)
 
         # Texto PID Prox
         self.lbl_pidProx = QLabel(self)
-        self.lbl_pidProx.setText('PID Prox.: ' + str(self.pid))
+        self.lbl_pidProx.setText('PID 2xProx.: ' + str(self.pid))
         self.lbl_pidProx.move(390, 220)
+
+        # Texto de aviso
+        self.lbl_avisoPID = QLabel(self)
+        self.lbl_avisoPID.setText('Sem Processos')
+        self.lbl_avisoPID.move(390, 235)
 
         # Texto Page Hit
         self.lbl_pagehit = QLabel(self)
@@ -180,29 +186,33 @@ class window(QMainWindow):
         # Texto Page Miss
         self.lbl_pagemiss = QLabel(self)
         self.lbl_pagemiss.setText('Page Miss: ' + str(self.pagemiss))
-        self.lbl_pagemiss.move(100, 120)
+        self.lbl_pagemiss.move(120, 120)
 
         # Texto Criadores
         self.lbl_textoCriadores = QLabel(self)
         self.lbl_textoCriadores.setText('Felipe Homrich Melchior - Lucas Antunes de Almeida')
-        self.lbl_textoCriadores.move(70, 620)
+        self.lbl_textoCriadores.move(95, 620)
         self.lbl_textoCriadores.resize(500, 20)
 
         self.show()
 
     def setPid(self, pid1, pid2, pid3):
-        self.lbl_pidAnt.setText('PID Ant.: ' + str(pid1))
-        self.lbl_pidAtual.setText('PID Atual: ' + str(pid2))
-        self.lbl_pidProx.setText('PID Prox.: ' + str(pid3))
+        self.lbl_pidAnt.setText('PID Atual: ' + str(pid1))
+        self.lbl_pidAtual.setText('PID Prox.: ' + str(pid2))
+        self.lbl_pidProx.setText('PID 2xProx.: ' + str(pid3))
 
         self.repaint()
 
     def PageHit(self, pagehit):
-        self.lbl_pagehit.setText('Page Miss: ' + str(pagehit))
+        self.lbl_pagehit.setText('Page Hit: ' + str(pagehit))
         self.repaint()
 
     def PageMiss(self, pagemiss):
         self.lbl_pagemiss.setText('Page Miss: ' + str(pagemiss))
+        self.repaint()
+
+    def mostraAviso(self, texto):
+        self.lbl_avisoPID.setText(texto)
         self.repaint()
 
     def UpdatePage(self):
@@ -215,6 +225,15 @@ class window(QMainWindow):
         self.textbox_4.setText("   " + str(self.local_page[3]))
         self.textbox_5.setText("   " + str(self.local_page[4]))
         self.textbox_6.setText("   " + str(self.local_page[5]))
+
+        self.textbox_q1.setText("    " + str(self.frames[0]))
+        self.textbox_q2.setText("    " + str(self.frames[1]))
+        self.textbox_q3.setText("    " + str(self.frames[2]))
+        self.textbox_q4.setText("    " + str(self.frames[3]))
+        self.textbox_q5.setText("    " + str(self.frames[4]))
+        self.textbox_q6.setText("    " + str(self.frames[5]))
+        self.textbox_q7.setText("    " + str(self.frames[6]))
+        self.textbox_q8.setText("    " + str(self.frames[7]))
 
         self.local_missHit = self.bk.missAndHit()
         self.PageHit(self.local_missHit[0])
@@ -241,13 +260,15 @@ class window(QMainWindow):
 
     def MataProcesso(self):
         self.PID_to_kill = self.textbox_kill.text()
-        
         self.bk.killProcess(self.PID_to_kill)
-        
-        print(self.PID_to_kill)
     
     def Avanca1(self):
-        self.UpdatePage()
+        self.qtdPID = self.bk.quantPid()
+        if(self.qtdPID > 0):
+            self.UpdatePage()
+            self.mostraAviso("")
+        else:
+            self.mostraAviso("Sem Processos")
 
     def Avanca2(self):
         self.Avanca1()
@@ -259,4 +280,4 @@ class window(QMainWindow):
         self.Avanca1()
 
     def Ajuda(self):
-        QMessageBox.question(self, "Ajuda", "TODO", QMessageBox.Ok)
+        QMessageBox.question(self, "Ajuda", "Este Software tem como objetivo simular paginação de memória, usando FIFO e FirstFit.\n\n1. Na seção de Páginas, ficam as páginas locais do processo atual.\n\n2. Na seção de Quadros, ficam os PID's dos processos que estão em execução ou na fila de execução.\n\n3. Ao lado dos quadros, encontra-se uma parte da fila de processos para a execução.\n\n4. Os botões de criação de processos, efetuam a criação de processos de diferentes tamanhos, cada processo recebe uma quantidade de ciclos aleatórias para a sua execução. Cada tamanho remete à quantidade de páginas que o mesmo ocupará na memória, as páginas tem tamanho 2K.\n\n5. É possível avançar ciclos, utilizando os botões de avanço.\n\n6. Se necessário, um processo pode ser encerrado com o botão 'Matar Processo', passando o PID do processo que irá ser encerrado. Os processos tem uma quantidade de ciclos, quando esse número chegar a 0, o processo será enceerrado automaticamente.", QMessageBox.Ok)
