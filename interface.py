@@ -111,10 +111,6 @@ class window(QMainWindow):
         self.button_12k.move(240, 315)
         self.button_12k.clicked.connect(self.AdicionaProcesso12K)
 
-        # self.button_16k = QPushButton('Processo 16K', self)
-        # self.button_16k.move(350, 315)
-        # self.button_16k.clicked.connect(self.AdicionaProcesso16K)
-
         # Texto Pular Ciclos
         self.lbl = QLabel(self)
         self.lbl.setText('Pular Ciclo')
@@ -157,7 +153,7 @@ class window(QMainWindow):
 
         # Cria Botão de Ajuda
         self.button_help = QPushButton('Ajuda', self)
-        self.button_help.move(350, 15)
+        self.button_help.move(370, 15)
         self.button_help.resize
         self.button_help.clicked.connect(self.Ajuda)
 
@@ -186,24 +182,31 @@ class window(QMainWindow):
         self.lbl_pagemiss.setText('Page Miss: ' + str(self.pagemiss))
         self.lbl_pagemiss.move(100, 120)
 
+        # Texto Criadores
+        self.lbl_textoCriadores = QLabel(self)
+        self.lbl_textoCriadores.setText('Felipe Homrich Melchior - Lucas Antunes de Almeida')
+        self.lbl_textoCriadores.move(70, 620)
+        self.lbl_textoCriadores.resize(500, 20)
+
         self.show()
 
-    def setPid(self, pid):
-        self.lbl_pid.setText('PID: ' + str(pid))
+    def setPid(self, pid1, pid2, pid3):
+        self.lbl_pidAnt.setText('PID Ant.: ' + str(pid1))
+        self.lbl_pidAtual.setText('PID Atual: ' + str(pid2))
+        self.lbl_pidProx.setText('PID Prox.: ' + str(pid3))
+
         self.repaint()
 
-    def PageHit(self):
-        self.pagehit = self.pagehit + 1
-        self.lbl_pagehit.setText('Page Miss: ' + str(self.pagehit))
+    def PageHit(self, pagehit):
+        self.lbl_pagehit.setText('Page Miss: ' + str(pagehit))
         self.repaint()
 
-    def PageMiss(self):
-        self.pagemiss = self.pagemiss + 1
-        self.lbl_pagemiss.setText('Page Miss: ' + str(self.pagemiss))
+    def PageMiss(self, pagemiss):
+        self.lbl_pagemiss.setText('Page Miss: ' + str(pagemiss))
         self.repaint()
 
     def UpdatePage(self):
-        self.bk.setPages()
+        self.frames = self.bk.setFrames()    
         self.local_page = self.bk.actualPage() 
 
         self.textbox_1.setText("   " + str(self.local_page[0]))
@@ -213,35 +216,47 @@ class window(QMainWindow):
         self.textbox_5.setText("   " + str(self.local_page[4]))
         self.textbox_6.setText("   " + str(self.local_page[5]))
 
+        self.local_missHit = self.bk.missAndHit()
+        self.PageHit(self.local_missHit[0])
+        self.PageMiss(self.local_missHit[1])
+
+        self.local_pids = self.bk.getPids()
+        self.setPid(self.local_pids[0], self.local_pids[1], self.local_pids[2])
+
     @pyqtSlot()
     def AdicionaProcesso4K(self):
         self.bk.createProcess(4)
+        self.bk.setPages()
         self.Avanca1()
 
     def AdicionaProcesso8K(self):
         self.bk.createProcess(8)
+        self.bk.setPages()
         self.Avanca1()
 
     def AdicionaProcesso12K(self):
         self.bk.createProcess(12)
+        self.bk.setPages()
         self.Avanca1()
 
-    # def AdicionaProcesso16K(self):
-    #     print("Botao Clicado - 8k")
-
     def MataProcesso(self):
-        print("Botao Clicado - 8k")
+        self.PID_to_kill = self.textbox_kill.text()
+        
+        self.bk.killProcess(self.PID_to_kill)
+        
+        print(self.PID_to_kill)
     
     def Avanca1(self):
         self.UpdatePage()
 
     def Avanca2(self):
-        print("Botao Clicado - 8k")
+        self.Avanca1()
+        self.Avanca1()
 
     def Avanca3(self):
-        print("Botao Clicado - 4k")
+        self.Avanca1()
+        self.Avanca1()
+        self.Avanca1()
 
     def Ajuda(self):
-        print("Ajuda")
-
-        
+        QMessageBox.question(self, "Ajuda", "TODO", QMessageBox.Ok)
